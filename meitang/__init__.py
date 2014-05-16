@@ -6,8 +6,12 @@ from flask import Flask, request, render_template
 #from flask.ext.babel import Babel
 
 from .config import DefaultConfig
-#from .api import api
 from .extensions import db 
+
+
+from .shai import shai
+from .user import user
+from .api import api
 
 
 # For import *
@@ -15,24 +19,26 @@ __all__ = ['create_app']
 
 DEFAULT_BLUEPRINTS = (
     shai,
+    user,
     api,
 )
 
+def create_app(config=None, app_name=None, blueprints=None):
+    """Create a Flask app."""
 
-"""Create a Flask app."""
+    app_name = DefaultConfig.PROJECT
+    blueprints = DEFAULT_BLUEPRINTS
 
-app_name = DefaultConfig.PROJECT
-blueprints = DEFAULT_BLUEPRINTS
-
-#app = Flask(app_name, instance_path=INSTANCE_FOLDER_PATH, instance_relative_config=True)
-app = Flask(app_name)
-configure_app(app, config)
-configure_hook(app)
-configure_blueprints(app, blueprints)
-configure_extensions(app)
-configure_logging(app)
-configure_template_filters(app)
-configure_error_handlers(app)
+    #app = Flask(app_name, instance_path=INSTANCE_FOLDER_PATH, instance_relative_config=True)
+    app = Flask(app_name)
+    configure_app(app, config)
+    configure_hook(app)
+    configure_blueprints(app, blueprints)
+    configure_extensions(app)
+    configure_logging(app)
+    configure_template_filters(app)
+    configure_error_handlers(app)
+    return app
 
 
 def configure_app(app, config=None):

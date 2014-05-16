@@ -47,7 +47,7 @@ STRING_LEN = 64
 
 
 def get_current_time():
-    return datetime.utcnow()
+    return datetime.now()
 
 
 def pretty_date(dt, default=None):
