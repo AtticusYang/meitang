@@ -7,7 +7,7 @@ import string
 import random
 import os
 
-from datetime import datetime
+import datetime
 
 
 # Instance folder path, make it independent.
@@ -47,7 +47,7 @@ STRING_LEN = 64
 
 
 def get_current_time():
-    return datetime.now()
+    return datetime.date(year, month, day)
 
 
 def pretty_date(dt, default=None):

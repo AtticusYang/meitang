@@ -1,3 +1,4 @@
 # -*- coding: utf-8 -*-
 
-from .views import shai 
+from .models import Post
+from .views import shai

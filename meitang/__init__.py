@@ -6,7 +6,7 @@ from flask import Flask, request, render_template
 #from flask.ext.babel import Babel
 
 from .config import DefaultConfig
-from .extensions import db 
+from .extensions import db
 
 
 from .shai import shai
@@ -103,7 +103,7 @@ def configure_hook(app):
 
 def configure_error_handlers(app):
 
-    @app.errorhandler(403)
+    """@app.errorhandler(403)
     def forbidden_page(error):
         return render_template("errors/forbidden_page.html"), 403
 
@@ -113,4 +113,5 @@ def configure_error_handlers(app):
 
     @app.errorhandler(500)
     def server_error_page(error):
-        return render_template("errors/server_error.html"), 500
+        return render_template("errors/server_error.html"), 500"""
+    pass
