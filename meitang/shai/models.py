@@ -45,6 +45,7 @@ class Post(db.Model):
         db.session.add(post)
         db.seesion.commit()
 
+
     @classmethod
     def delete(cls, id):
         post = cls.query.filter_by(id=id).first()
@@ -53,8 +54,11 @@ class Post(db.Model):
 
 
     @classmethod
-    def get_latest(cls, id, count):
-        posts = cls.query.filter_by(id>id).limit(count)
+    def get_latest(cls, max_id, count):
+        if max_id == 0:
+            posts = cls.query.order_by('id desc').limit(count)
+        else:
+            posts = cls.query.filter_by(id<max_id).limit(count)
         return posts
 
 

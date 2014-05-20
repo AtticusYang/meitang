@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import datetime
+from datetime import datetime
 from sqlalchemy import Column
 from sqlalchemy import event
 from sqlalchemy import DDL
@@ -11,8 +11,8 @@ class Device(db.Model):
 
     __tablename__ = 'device'
 
-    id = Column(db.Integer, primary_key=True)
-    create_time = Column(db.DateTime, default=datetime.datetime.now)
+    id = Column(db.Integer, primary_key = True)
+    create_time = Column(db.DateTime, default = datetime.now)
 
 
     def __repr__(self):
@@ -20,10 +20,10 @@ class Device(db.Model):
 
     @classmethod
     def gen_eid(cls):
-        current_user_id = UserId()
-        db.session.add(current_user_id)
+        cur_device = cls()
+        db.session.add(cur_device)
         db.session.commit()
-        return str(current_user_id.id)
+        return str(cur_device.id)
 
 
 
@@ -37,13 +37,14 @@ class BindUser(db.Model):
     name = Column(db.String(64), nullable = False)
     avatar = Column(db.String(64), nullable = False)
     alt = Column(db.String(64), nullable = True)
-    create_time = (db.DateTime)
+    create_time = Column(db.DateTime, nullable = True)
     loc_id = Column(db.Integer, nullable = True)
     loc_name = Column(db.String(64), nullable = True)
-    bind_time = (db.DateTime)
+    eid = Column(db.Integer, nullable = True)
+    bind_time = Column(db.DateTime, default = datetime.now)
 
 
-    def __init__(self, uid, name, avatar, alt, create_time, loc_id, loc_name):
+    def __init__(self, uid, name, avatar, alt, create_time, loc_id, loc_name, eid):
         self.uid = uid
         self.name = name
         self.avatar = avatar
@@ -51,13 +52,14 @@ class BindUser(db.Model):
         self.create_time = create_time
         self.loc_id = loc_id
         self.loc_name = loc_name
+        self.eid = eid
 
     def __repr__(self):
-        return '<BindUser: %r %r %r>' %(self.id, self.uid, self.name)
+        return '<BindUser: %r %r %r %r>' %(self.id, self.uid, self.name, self.avatar)
 
     @classmethod
-    def add(cls, uid, name, avatar, alt, create_time, loc_id, loc_name):
-        bind_user = cls(uid, name, avatar, alt, create_time, loc_id, loc_name)
+    def add(cls, uid, name, avatar, alt, create_time, loc_id, loc_name, eid):
+        bind_user = cls(uid, name, avatar, alt, create_time, loc_id, loc_name, eid)
         db.session.add(bind_user)
         db.session.commit()
 
