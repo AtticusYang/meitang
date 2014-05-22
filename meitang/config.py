@@ -2,7 +2,7 @@
 
 import os
 
-from .utils import make_dir 
+from .utils import make_dir
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
@@ -32,9 +32,11 @@ class DefaultConfig(BaseConfig):
     DEBUG = True
 
     SQLALCHEMY_ECHO = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + PROJECT_ROOT + '/production.sqlite'
+    #SQLALCHEMY_DATABASE_URI = 'sqlite:///' + PROJECT_ROOT + '/production.sqlite'
     # MYSQL for production.
     #SQLALCHEMY_DATABASE_URI = 'mysql://username:password@server/db?charset=utf8'
+    SQLALCHEMY_DATABASE_URI = 'mysql://root:JGtm@2014@localhost/gemini?charset=utf8'
+
 
     # Flask-babel: http://pythonhosted.org/Flask-Babel/
     #ACCEPT_LANGUAGES = ['zh']
