@@ -1,27 +1,34 @@
 # -*- coding: utf-8 -*-
 
 from flask import Blueprint
+from flask import Response
 from flask import jsonify
 from flask import request
 from flask import render_template
 
 from ..user import Device
+from ..user import BindUser
 from ..shai import Post
+
+import json
 
 
 api = Blueprint('api', __name__, url_prefix='/api/v1')
 
 
-@api.route('/getuid', methods=['GET'])
+@api.route('/geteid', methods=['GET'])
 def getuid():
     eid = Device.gen_eid()
-    return jsonify(ret = 0,
-                errcode = '0100',
-                errmsg = '',
-                data = {
-                    'eid' : eid
-                    }
-            )
+    data = {'ret' : 0,
+            'errcode' : '0',
+            'errmsg' : '',
+            'data' : {
+                'eid' : eid,
+            }
+        }
+    return Response(json.dumps(data, ensure_ascii=False), \
+            content_type='application/json; charset=utf-8')
+
 
 
 @api.route('/bind', methods=['GET', 'POST'])
@@ -44,7 +51,6 @@ def bind():
                     )
         bind_user = BindUser(eid, uid, alt, avatar, create_time, loc_id, loc_name)
         BindUser.add(bind_user)
-        return  '1111111111111111111'
 
 
 
@@ -68,22 +74,18 @@ def shai():
 
 @api.route('/latest', methods=['GET'])
 def latest():
-    try:
-        eid = int(request.args.get('eid'))
-    except:
-        return jsonify(ret = -1,
-                    errcode = '0301',
-                    errmsg = 'eid is null'
-                )
-
-
+    eid = int(request.args.get('eid', -1))
     max_id = int(request.args.get('max_id', 0))
     count = int(request.args.get('count', 20))
     gender = int(request.args.get('gender', 0))
     posts = Post.get_latest(max_id, count)
-    users = BindUser.get_by_ids()
+    for post in posts:
+        user_douban = BindUser.get_by_uid(post.uid)
+        post.user_douban = user_douban
 
-    return '11111111111'
+    return '11111111111111111111111'
+
+
 
 
 

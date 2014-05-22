@@ -8,7 +8,7 @@ class Post(db.Model):
     __table__name = 'post'
 
     id = db.Column(db.Integer, primary_key = True)
-    uid = db.Column(db.Integer)
+    uid = db.Column(db.String(16))
     content = db.Column(db.String(160), nullable = True)
     image_id = db.Column(db.String(64))
     small_image_id = db.Column(db.String(64))
@@ -20,7 +20,7 @@ class Post(db.Model):
 
 
     def __init__(self, uid, content, image_id, small_image_id,\
-            pub_time, open_level, favor_count, source, source_url):
+            pub_time, open_level, favor_count, source) :
         self.uid = uid
         self.content = content
         self.image_id = image_id
@@ -29,12 +29,13 @@ class Post(db.Model):
         self.open_level = open_level
         self.favor_count = favor_count
         self.source = source
-        self.source_url = source_url
 
 
 
     def __repr__(self):
-        return '<Post: %r %r %r %r %r>' %(self.id, self.uid, self.content, self.image_id, self.small_image_id)
+        return '<Post: %r %r %r %r %r %r %r %r %r>' %(self.id, self.uid, \
+            self.content, self.image_id, self.small_image_id, self.pub_time,\
+            self.open_level, self.favor_count, self.source)
 
 
     @classmethod
@@ -56,9 +57,9 @@ class Post(db.Model):
     @classmethod
     def get_latest(cls, max_id, count):
         if max_id == 0:
-            posts = cls.query.order_by('id desc').limit(count)
+            posts = cls.query.order_by('id desc').limit(count).all()
         else:
-            posts = cls.query.filter_by(id<max_id).limit(count)
+            posts = cls.query.filter_by(id<max_id).limit(count).all()
         return posts
 
 

@@ -33,7 +33,7 @@ class BindUser(db.Model):
     __tablename__ = 'bind_user'
 
     id = Column(db.Integer, primary_key = True)
-    uid = Column(db.Integer, nullable = False, index = True)
+    uid = Column(db.String(32), nullable = False, index = True)
     name = Column(db.String(64), nullable = False)
     avatar = Column(db.String(64), nullable = False)
     alt = Column(db.String(64), nullable = True)

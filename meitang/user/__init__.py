@@ -2,3 +2,4 @@
 
 from .views import user
 from .models import Device
+from .models import BindUser
