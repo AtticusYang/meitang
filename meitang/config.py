@@ -23,6 +23,8 @@ class BaseConfig(object):
     # http://flask.pocoo.org/docs/quickstart/#sessions
     SECRET_KEY = 'secret key'
 
+    #JSON_AS_ASCII = False
+
     LOG_FOLDER = os.path.join(PROJECT_ROOT, 'logs')
     make_dir(LOG_FOLDER)
 

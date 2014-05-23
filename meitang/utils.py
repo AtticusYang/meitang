@@ -9,6 +9,16 @@ import os
 
 import datetime
 
+from flask import make_response
+from json import dumps
+
+def jsonify(status=200, indent=4, sort_keys=True, **kwargs):
+  response = make_response(dumps(dict(**kwargs), indent=indent, sort_keys=sort_keys, ensure_ascii=False))
+  response.headers['Content-Type'] = 'application/json; charset=utf-8'
+  response.headers['mimetype'] = 'application/json'
+  response.status_code = status
+  return response
+
 
 # Instance folder path, make it independent.
 INSTANCE_FOLDER_PATH = os.path.join('/tmp', 'instance')
