@@ -18,6 +18,7 @@ from .serializer import PostSerializer
 
 from datetime import datetime
 import hashlib
+import chardet
 
 api = Blueprint('api', __name__, url_prefix='/api/v1')
 
@@ -79,13 +80,15 @@ def shai():
                     errmsg = 'not support image type')
 
     try:
-        type = filename.split('.')[1].lower()
+        type = filename.split('.')[1].lower().encode('utf8', 'ignore')
+        print type, chardet.detect(type)
         image_name = "%s/%s/%s" %("image", uid, filename)
-        image_id = "%s.%s" %(hashlib.md5(_image_name).hexdigest(), type)
+        image_id = hashlib.new('md5', image_name).hexdigest() + "." + type
+        print image_id, chardet.detect(image_id)
         small_image_id = image_id
         data = {'image':image.stream.read(), 'mime':image.mimetype}
         beansdb.set(image_id, data)
-        Post.add(uid, content, image_name, small_image_name)
+        Post.add(uid, content, image_id, small_image_id)
         return jsonify(ret = 0,
                     errcode = '0300',
                     errmgs = '') 

@@ -15,7 +15,7 @@ manager = Manager(app)
 def run():
     """Run in local machine."""
 
-    app.run('0.0.0.0')
+    app.run('0.0.0.0', 8080)
 
 
 @manager.command

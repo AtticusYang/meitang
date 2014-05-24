@@ -37,9 +37,9 @@ class DefaultConfig(BaseConfig):
     #SQLALCHEMY_DATABASE_URI = 'sqlite:///' + PROJECT_ROOT + '/production.sqlite'
     # MYSQL for production.
     #SQLALCHEMY_DATABASE_URI = 'mysql://username:password@server/db?charset=utf8'
-    SQLALCHEMY_DATABASE_URI = 'mysql://root:@localhost/virgo?charset=utf8'
+    #SQLALCHEMY_DATABASE_URI = 'mysql://root:@localhost/virgo?charset=utf8'
 
-    #SQLALCHEMY_DATABASE_URI = 'mysql://root:JGtm@2014@115.29.140.202/virgo?charset=utf8'
+    SQLALCHEMY_DATABASE_URI = 'mysql://root:JGtm@2014@localhost/virgo?charset=utf8'
 
 
     # Flask-babel: http://pythonhosted.org/Flask-Babel/
