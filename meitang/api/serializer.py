@@ -12,7 +12,7 @@ class BindUserSerializer(Serializer):
 
 
 class PostSerializer(Serializer):
-    post_id = fields.String(attribute='id')
+    id = fields.String(attribute='id')
     uid = fields.String(attribute='uid')
     content = fields.String(attribute='content')
     image = fields.Function(lambda obj: "http://dadanshai.com/image/"+obj.image_id)

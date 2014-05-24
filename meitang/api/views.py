@@ -19,6 +19,7 @@ from .serializer import PostSerializer
 from datetime import datetime
 import hashlib
 import chardet
+import sys
 
 api = Blueprint('api', __name__, url_prefix='/api/v1')
 
@@ -106,15 +107,18 @@ def latest():
     count = int(request.args.get('count', 20))
     gender = int(request.args.get('gender', 0))
     posts = Post.get_latest(max_id, count)
+    nextstartpos = sys.maxint
 
     for post in posts:
+        if nextstartpos >  post.id:
+            nextstartpos = post.id
         user_douban = BindUser.get_by_uid(post.uid)
         post.user_douban = user_douban
 
     return jsonify(ret = 0,
                 errcode = '0400',
                 errmsg = '',
-                data = {'nextstartpos' : 4,
+                data = {'nextstartpos' : nextstartpos,
                     "shais": PostSerializer(posts, many=True).data,})
 
 
