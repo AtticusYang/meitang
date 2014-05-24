@@ -36,9 +36,13 @@ class Post(db.Model):
         self.source_url = source_url
 
     def __repr__(self):
-        return '<Post: %r %r %r %r %r %r %r %r %r>' %(self.id, self.uid, \
+        """return '<Post: %r %r %r %r %r %r %r %r %r>' %(self.id, self.uid, \
             self.content, self.image_id, self.small_image_id, self.open_level, \
-            self.favor_count, self.source, self.source_url, self.pub_time.strftime("%Y-%m-%d"))
+            self.favor_count, self.source, self.source_url, self.pub_time.strftime("%Y-%m-%d"))"""
+        '''return '<Post: %r %r %r %r %r %r %r>' %(self.id, self.uid, \
+            self.content, self.image_id, self.small_image_id, self.open_level, \
+            self.favor_count, self.source)'''
+        return "{'abc' : 'right'}"
 
     @classmethod
     def add(cls, uid, content, image_id, small_image_id, open_level = 0,\

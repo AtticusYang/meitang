@@ -4,13 +4,20 @@ from flask import Blueprint
 from flask import Response
 from flask import request
 from flask import render_template
+#from werzeug import secure_filename
 
 from ..user import Device
 from ..user import BindUser
 from ..shai import Post
 from ..utils import jsonify
+from ..utils import allowed_file
+
+from ..extensions import beansdb
+
+from .serializer import PostSerializer
 
 from datetime import datetime
+import hashlib
 
 api = Blueprint('api', __name__, url_prefix='/api/v1')
 
@@ -65,8 +72,20 @@ def shai():
                     errcode = '0301', 
                     errmsg = 'uid, content or image is null')
     
+    filename = image.filename
+    if not allowed_file(filename):
+        return jsonify(ret = -1, 
+                    errcode = '0302', 
+                    errmsg = 'not support image type')
+
     try:
-        Post.add(uid, content, '1111', '222')
+        type = filename.split('.')[1].lower()
+        image_name = "%s/%s/%s" %("image", uid, filename)
+        image_id = "%s.%s" %(hashlib.md5(_image_name).hexdigest(), type)
+        small_image_id = image_id
+        data = {'image':image.stream.read(), 'mime':image.mimetype}
+        beansdb.set(image_id, data)
+        Post.add(uid, content, image_name, small_image_name)
         return jsonify(ret = 0,
                     errcode = '0300',
                     errmgs = '') 
@@ -84,17 +103,16 @@ def latest():
     count = int(request.args.get('count', 20))
     gender = int(request.args.get('gender', 0))
     posts = Post.get_latest(max_id, count)
-    data = []
+
     for post in posts:
-        print post.uid, post.content, post.image_id, post.small_image_id
-        print '1' * 60
-        #user_douban = BindUser.get_by_uid(post.uid)
-        #post.user_douban = user_douban
-        #if user_douban:
-        data.append(post)
+        user_douban = BindUser.get_by_uid(post.uid)
+        post.user_douban = user_douban
+
     return jsonify(ret = 0,
                 errcode = '0400',
-                data = data)
+                errmsg = '',
+                data = {'nextstartpos' : 4,
+                    "shais": PostSerializer(posts, many=True).data,})
 
 
 
