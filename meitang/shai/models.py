@@ -1,6 +1,7 @@
 #-*- coding:utf-8 -*-
 
 from sqlalchemy import Column
+from sqlalchemy import and_
 from ..extensions import db
 
 from datetime import datetime
@@ -74,4 +75,41 @@ class Post(db.Model):
         post = cls.query.filter_by(id=id).first()
         post.open_level = open_level
         db.session.commit()
+
+
+class Favor(db.Model):
+
+    __tablename__ = 'favor'
+    __table__args = {
+        'mysql_engine': 'InnoDB',
+        'mysql_charset': 'utf8'
+    }
+
+    id = Column(db.Integer, primary_key = True)
+    uid = Column(db.String(32), index = True)
+    post_id = Column(db.Integer, index = True)
+    favor_time = Column(db.DateTime, default = datetime.now)
+
+    def __init__(self, uid, post_id):
+        self.uid = uid
+        self.post_id = post_id
+
+    def __repr__(self):
+        return '<Favor: %r %r>' %(self.uid, self.post_id)
+
+    @classmethod
+    def is_favored(cls, uid, post_id):
+        favor = cls.query.filter(and_(uid==uid, post_id==post_id)).first()
+        return favor
+
+    @classmethod
+    def add(cls, uid, post_id):
+        if not cls.is_favored(uid, post_id):
+            favor = cls(uid, post_id)
+            db.session.add(favor)
+            db.session.commit()
+
+
+
+
 

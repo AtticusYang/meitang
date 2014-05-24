@@ -12,6 +12,7 @@ from .extensions import db
 from .shai import shai
 from .user import user
 from .api import api
+from .manage import manage
 
 
 # For import *
@@ -21,6 +22,7 @@ DEFAULT_BLUEPRINTS = (
     shai,
     user,
     api,
+    manage,
 )
 
 def create_app(config=None, app_name=None, blueprints=None):

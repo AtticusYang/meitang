@@ -43,25 +43,25 @@ def bind():
     eid = request.form.get('eid')
     uid = request.form.get('uid')
     name = request.form.get('name')
-    avatar = request.form.get('avatar') 
+    avatar = request.form.get('avatar')
     alt = request.form.get('alt')
     create_time = request.form.get('create_time')
     loc_id = request.form.get('loc_id')
     loc_name = request.form.get('loc_name')
 
     if not eid or not uid or not name or not avatar or not alt:
-        return jsonify(ret = -1, 
+        return jsonify(ret = -1,
                 errcode = '0201',
                 errmsg = 'eid, uid, name, avatar or alt is none')
     try:
         BindUser.add(eid, uid, name, avatar, alt, create_time, loc_id, loc_name)
         return jsonify(ret = 0,
                     errcode = '0200',
-                    errmgs = '') 
+                    errmgs = '')
     except Exception, e:
         return jsonify(ret = -1,
                     errcode = '0202',
-                    errmsg = 'connect mysql server failed')
+                    errmsg = 'connect database server failed')
 
 
 @api.route('/shai', methods=['POST'])
@@ -70,14 +70,14 @@ def shai():
     content = request.form.get('content')
     image = request.files.get('image')
     if not uid or not content or not image:
-        return jsonify(ret = -1, 
-                    errcode = '0301', 
+        return jsonify(ret = -1,
+                    errcode = '0301',
                     errmsg = 'uid, content or image is null')
-    
+
     filename = image.filename
     if not allowed_file(filename):
-        return jsonify(ret = -1, 
-                    errcode = '0302', 
+        return jsonify(ret = -1,
+                    errcode = '0302',
                     errmsg = 'not support image type')
 
     try:
@@ -92,7 +92,7 @@ def shai():
         Post.add(uid, content, image_id, small_image_id)
         return jsonify(ret = 0,
                     errcode = '0300',
-                    errmgs = '') 
+                    errmgs = '')
     except Exception, e:
         print e
         return jsonify(ret = -1,
