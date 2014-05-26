@@ -99,7 +99,7 @@ class Favor(db.Model):
 
     @classmethod
     def is_favored(cls, uid, post_id):
-        favor = cls.query.filter(and_(uid==uid, post_id==post_id)).first()
+        favor = cls.query.filter(and_(cls.uid==uid, cls.post_id==post_id)).first()
         return favor
 
     @classmethod
@@ -108,8 +108,4 @@ class Favor(db.Model):
             favor = cls(uid, post_id)
             db.session.add(favor)
             db.session.commit()
-
-
-
-
 

@@ -27,9 +27,9 @@ class Online(db.Model):
         self.eid = eid
         self.client_name = client_name
         self.client_version = client_version
-        client.status = status
-        client.uid = uid
-        client.name = name
+        self.status = status
+        self.uid = uid
+        self.name = name
 
 
     def __repr__(self):
@@ -62,6 +62,7 @@ class FeedBack(db.Model):
     def __init__(self, eid, content, uid, name, client_name, client_version, contact):
         self.eid = eid
         self.content = content
+        self.uid = uid
         self.name = name
         self.client_name = client_name
         self.client_version = client_version

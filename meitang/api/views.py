@@ -7,8 +7,10 @@ from flask import render_template
 #from werzeug import secure_filename
 
 from ..user import Device
-from ..user import BindUser
+from ..user import DoubanUser
+from ..user import Bind
 from ..shai import Post
+from ..shai import Favor
 from ..utils import jsonify
 from ..utils import allowed_file
 
@@ -18,7 +20,6 @@ from .serializer import PostSerializer
 
 from datetime import datetime
 import hashlib
-import chardet
 import sys
 
 api = Blueprint('api', __name__, url_prefix='/api/v1')
@@ -45,7 +46,7 @@ def bind():
     name = request.form.get('name')
     avatar = request.form.get('avatar')
     alt = request.form.get('alt')
-    create_time = request.form.get('create_time')
+    join_time = request.form.get('join_time')
     loc_id = request.form.get('loc_id')
     loc_name = request.form.get('loc_name')
 
@@ -54,7 +55,12 @@ def bind():
                 errcode = '0201',
                 errmsg = 'eid, uid, name, avatar or alt is none')
     try:
-        BindUser.add(eid, uid, name, avatar, alt, create_time, loc_id, loc_name)
+        douban_user = DoubanUser.get_by_uid(uid)
+        if not douban_user:
+            DoubanUser.add(uid, name, avatar, alt, join_time, loc_id, loc_name)
+        bind = Bind.get(eid, uid)
+        if not bind:
+            Bind.add(eid, uid)
         return jsonify(ret = 0,
                     errcode = '0200',
                     errmgs = '')
@@ -122,8 +128,30 @@ def latest():
                     "shais": PostSerializer(posts, many=True).data,})
 
 
-
-
-
-
+@api.route('/praise', methods=['POST'])
+def praise():
+    uid = request.form.get('uid')
+    post_id = request.form.get('post_id')
+    print uid, post_id
+    if not uid or not post_id:
+        return jsonify(ret = -1,
+                    errcode = '0501',
+                    errmsg = 'uid, post_id is null')
+    try:
+        favor = Favor.is_favored(uid, post_id)
+        if favor:
+            return jsonify(ret = -1,
+                    errcode = '0502',
+                    errmsg = 'uid had been praised id')
+        else:
+            print '333333333333333333'
+            Favor.add(uid, post_id)
+            return jsonify(ret = -1,
+                    errcode = '0500',
+                    errmsg = '')
+    except Exception, e:
+        print e
+        return jsonify(ret = -1,
+                    errcode = '0503',
+                    errmsg = 'connect database server failed')
 

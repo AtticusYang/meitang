@@ -1,12 +1,12 @@
 #-*- coding:utf-8 -*-
 from marshmallow import Serializer, fields
 
-class BindUserSerializer(Serializer):
+class DoubanUserSerializer(Serializer):
     uid = fields.String(attribute='uid')
     name = fields.String(attribute='name')
     alt = fields.String(attribute='alt')
     avatar = fields.String(attribute='avatar')
-    create_time = fields.DateTime(attribute='create_time')
+    join_time = fields.DateTime(attribute='join_time')
     loc_id = fields.String(attribute='loc_id')
     loc_name = fields.String(attribute='loc_name')
 
@@ -19,5 +19,5 @@ class PostSerializer(Serializer):
     small_image = fields.Function(lambda obj: "http://dadanshai.com/image/"+obj.small_image_id)
     favor_count = fields.String(attribute='favor_count')
     pub_time = fields.DateTime(attribute='pub_time')
-    user_douban = fields.Nested(BindUserSerializer)
+    user_douban = fields.Nested(DoubanUserSerializer)
 

@@ -8,7 +8,7 @@ from .models import FeedBack
 
 from ..utils import jsonify
 
-manage = Blueprint('manage', __name__, url_prefix='/v1/manage')
+manage = Blueprint('manage', __name__, url_prefix='/api/v1/manage')
 
 @manage.route('/adstatus', methods=['GET'])
 def adstatus():
@@ -35,11 +35,13 @@ def online():
                 errcode = '0701',
                 errmgs = 'eid, client_name, client_version or status is null')
     try:
+        print eid, client_name, client_version, status, uid, name
         Online.add(eid, client_name, client_version, status, uid, name)
         return jsonify(ret = 0,
                     errcode = '0700',
                     errmsg = '')
     except Exception, e:
+        print e
         return jsonify(ret = -1,
                     errcode = '0702',
                     errmsg = 'connect database server failed')
@@ -50,18 +52,17 @@ def online():
 @manage.route('/feedback', methods=['POST'])
 def feedback():
     eid = request.form.get('eid')
-    content = reqeust.form.get('content')
+    content = request.form.get('content')
     uid = request.form.get('uid')
     name = request.form.get('name')
     client_name = request.form.get('client_name')
     client_version = request.form.get('client_version')
     contact = request.form.get('contact')
 
-    if not eid or not content:
+    if not eid or not content or not uid or not name:
         return jsonify(ret = -1,
                 errcode = '0801',
-                errmgs = 'eid or content is null')
-
+                errmgs = 'eid, content, uid or name is null')
 
     try:
         FeedBack.add(eid, content, uid, name, client_name, client_version, contact)

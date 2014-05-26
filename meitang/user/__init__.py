@@ -2,4 +2,5 @@
 
 from .views import user
 from .models import Device
-from .models import BindUser
+from .models import DoubanUser
+from .models import Bind
