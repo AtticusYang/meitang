@@ -44,7 +44,7 @@ def bind():
     eid = request.form.get('eid')
     uid = request.form.get('uid')
     name = request.form.get('name')
-    avatar = request.form.get('avatar')
+    avatar = request.files.get('avatar')
     alt = request.form.get('alt')
     join_time = request.form.get('join_time')
     loc_id = request.form.get('loc_id')
@@ -54,10 +54,22 @@ def bind():
         return jsonify(ret = -1,
                 errcode = '0201',
                 errmsg = 'eid, uid, name, avatar or alt is none')
+    
+    filename = avatar.filename
+    if not allowed_file(filename):
+        return jsonify(ret = -1,
+                    errcode = '0202',
+                    errmsg = 'not support image type')
+    
     try:
         douban_user = DoubanUser.get_by_uid(uid)
         if not douban_user:
-            DoubanUser.add(uid, name, avatar, alt, join_time, loc_id, loc_name)
+            type = filename.split('.')[1].lower().encode('utf8', 'ignore')
+            avatar_name = "%s/%s/%s" %("avatar", uid, filename)
+            avatar_id = hashlib.new('md5', avatar_name).hexdigest() + "." + type
+            data = {'image':avatar.stream.read(), 'mime':avatar.mimetype}
+            beansdb.set(avatar_id, data)
+            DoubanUser.add(uid, name, avatar_id, alt, 1, join_time, loc_id, loc_name)
         bind = Bind.get(eid, uid)
         if not bind:
             Bind.add(eid, uid)
@@ -65,6 +77,7 @@ def bind():
                     errcode = '0200',
                     errmgs = '')
     except Exception, e:
+        print e
         return jsonify(ret = -1,
                     errcode = '0202',
                     errmsg = 'connect database server failed')
@@ -88,17 +101,19 @@ def shai():
 
     try:
         type = filename.split('.')[1].lower().encode('utf8', 'ignore')
-        print type, chardet.detect(type)
         image_name = "%s/%s/%s" %("image", uid, filename)
         image_id = hashlib.new('md5', image_name).hexdigest() + "." + type
-        print image_id, chardet.detect(image_id)
         small_image_id = image_id
         data = {'image':image.stream.read(), 'mime':image.mimetype}
         beansdb.set(image_id, data)
-        Post.add(uid, content, image_id, small_image_id)
+        id = Post.add(uid, content, image_id, small_image_id)
+        post = Post.get(id)
+        user_douban = DoubanUser.get_by_uid(post.uid)
+        post.user_douban = user_douban
         return jsonify(ret = 0,
                     errcode = '0300',
-                    errmgs = '')
+                    errmgs = '',
+                    data = PostSerializer(post).data)
     except Exception, e:
         print e
         return jsonify(ret = -1,
@@ -118,7 +133,7 @@ def latest():
     for post in posts:
         if nextstartpos >  post.id:
             nextstartpos = post.id
-        user_douban = BindUser.get_by_uid(post.uid)
+        user_douban = DoubanUser.get_by_uid(post.uid)
         post.user_douban = user_douban
 
     return jsonify(ret = 0,
@@ -144,7 +159,6 @@ def praise():
                     errcode = '0502',
                     errmsg = 'uid had been praised id')
         else:
-            print '333333333333333333'
             Favor.add(uid, post_id)
             return jsonify(ret = -1,
                     errcode = '0500',

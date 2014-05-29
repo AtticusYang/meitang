@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from sqlalchemy import Column
-#from sqlalchemy import event
-#from sqlalchemy import DDL
+from sqlalchemy import and_
 from ..extensions import db
 
 
@@ -38,33 +37,34 @@ class DoubanUser(db.Model):
     }
 
     id = Column(db.Integer, primary_key = True)
-    uid = Column(db.Integer, nullable = False, index = True)
+    uid = Column(db.String(32), nullable = False, index = True)
     name = Column(db.String(64), nullable = False)
     avatar = Column(db.String(64), nullable = False)
     alt = Column(db.String(64), nullable = True)
+    user_type = Column(db.SmallInteger, default = 0)
     join_time = Column(db.DateTime, nullable = True)
     loc_id = Column(db.Integer, nullable = True)
     loc_name = Column(db.String(64), nullable = True)
     create_time = Column(db.DateTime, default = datetime.now)
 
 
-    def __init__(self, uid, name, avatar, alt, join_time, loc_id, loc_name, create_time):
+    def __init__(self, uid, name, avatar, alt, user_type, join_time, loc_id, loc_name):
         self.uid = uid
         self.name = name
         self.avatar = avatar
         self.alt = alt
+        self.user_type = user_type
         self.join_time = join_time
         self.loc_id = loc_id
         self.loc_name = loc_name
-        self.create_time = create_time
 
     def __repr__(self):
-        return '<DoubanUser: %r %r %r %r %r>' %(\
-            self.id, self.uid, self.name, self.avatar, self.alt)
+        return '<DoubanUser: %r %r %r %r %r %r>' %(\
+            self.id, self.uid, self.name, self.avatar, self.alt, self.user_type)
 
     @classmethod
-    def add(cls, uid, name, avatar, alt, join_time, loc_id, loc_name):
-        douban_user = cls(uid, name, avatar, alt, join_time, loc_id, loc_name)
+    def add(cls, uid, name, avatar, alt, user_type, join_time, loc_id, loc_name):
+        douban_user = cls(uid, name, avatar, alt, user_type, join_time, loc_id, loc_name)
         db.session.add(douban_user)
         db.session.commit()
 
@@ -89,7 +89,7 @@ class Bind(db.Model):
 
     id = Column(db.Integer, primary_key = True)
     eid = Column(db.Integer, nullable = False, index= True)
-    uid = Column(db.Integer, nullable = False, index = True)
+    uid = Column(db.String(32), nullable = False, index = True)
     create_time = Column(db.DateTime, default = datetime.now)
 
     def __init__(self, eid, uid):

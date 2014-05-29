@@ -15,7 +15,7 @@ class Post(db.Model):
     }
 
     id = db.Column(db.Integer, primary_key = True)
-    uid = db.Column(db.String(16))
+    uid = db.Column(db.String(32))
     content = db.Column(db.String(160), nullable = True)
     image_id = db.Column(db.String(64))
     small_image_id = db.Column(db.String(64))
@@ -43,7 +43,6 @@ class Post(db.Model):
         '''return '<Post: %r %r %r %r %r %r %r>' %(self.id, self.uid, \
             self.content, self.image_id, self.small_image_id, self.open_level, \
             self.favor_count, self.source)'''
-        return "{'abc' : 'right'}"
 
     @classmethod
     def add(cls, uid, content, image_id, small_image_id, open_level = 0,\
@@ -52,7 +51,12 @@ class Post(db.Model):
                 open_level, favor_count, source, source_url)
         db.session.add(post)
         db.session.commit()
-
+        return post.id
+    
+    @classmethod
+    def get(cls, id):
+        post = cls.query.filter_by(id=id).first()
+        return post
 
     @classmethod
     def delete(cls, id):
